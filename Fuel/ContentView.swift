@@ -1,0 +1,126 @@
+import SwiftUI
+import SwiftData
+
+struct ContentView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Query(sort: \Vehicle.createdAt, order: .reverse) private var vehicles: [Vehicle]
+
+    @State private var selectedVehicle: Vehicle?
+    @State private var showingAddVehicle = false
+    @State private var navigationPath = NavigationPath()
+
+    // Store the last viewed vehicle ID
+    @AppStorage("lastViewedVehicleID") private var lastViewedVehicleID: String = ""
+
+    var body: some View {
+        NavigationStack(path: $navigationPath) {
+            Group {
+                if vehicles.isEmpty {
+                    EmptyVehicleView(showingAddVehicle: $showingAddVehicle)
+                } else {
+                    VehicleListView(
+                        vehicles: vehicles,
+                        selectedVehicle: $selectedVehicle,
+                        showingAddVehicle: $showingAddVehicle
+                    )
+                }
+            }
+            .navigationDestination(for: Vehicle.self) { vehicle in
+                VehicleDetailView(vehicle: vehicle)
+                    .onAppear {
+                        // Save this vehicle as the last viewed
+                        lastViewedVehicleID = vehicle.id.uuidString
+                    }
+            }
+            .sheet(isPresented: $showingAddVehicle) {
+                AddVehicleView()
+            }
+            .onAppear {
+                navigateToLastVehicle()
+            }
+            .onChange(of: vehicles) { oldVehicles, newVehicles in
+                // If a new vehicle was added and we were empty before, navigate to it
+                if oldVehicles.isEmpty && !newVehicles.isEmpty {
+                    if let first = newVehicles.first {
+                        navigationPath.append(first)
+                    }
+                }
+            }
+        }
+    }
+
+    private func navigateToLastVehicle() {
+        // Only navigate if we haven't already and there are vehicles
+        guard navigationPath.isEmpty, !vehicles.isEmpty else { return }
+
+        // Try to find the last viewed vehicle
+        if !lastViewedVehicleID.isEmpty,
+           let lastID = UUID(uuidString: lastViewedVehicleID),
+           let lastVehicle = vehicles.first(where: { $0.id == lastID }) {
+            navigationPath.append(lastVehicle)
+        } else if let firstVehicle = vehicles.first {
+            // Fallback to the first vehicle if no last viewed or it no longer exists
+            navigationPath.append(firstVehicle)
+        }
+    }
+}
+
+struct EmptyVehicleView: View {
+    @Binding var showingAddVehicle: Bool
+
+    var body: some View {
+        VStack(spacing: 24) {
+            Image(systemName: "car.fill")
+                .font(.system(size: 80))
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [.teal, .cyan],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+
+            Text("Welcome to Fuel")
+                .font(.custom("Avenir Next", size: 32))
+                .fontWeight(.bold)
+
+            Text("Track your fuel consumption, costs, and efficiency.")
+                .font(.custom("Avenir Next", size: 16))
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 40)
+
+            Button(action: { showingAddVehicle = true }) {
+                Label("Add Your First Vehicle", systemImage: "plus.circle.fill")
+                    .font(.custom("Avenir Next", size: 18))
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 32)
+                    .padding(.vertical, 16)
+                    .background(
+                        LinearGradient(
+                            colors: [.teal, .cyan],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .clipShape(Capsule())
+            }
+            .padding(.top, 16)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(
+            LinearGradient(
+                colors: [Color(.systemBackground), Color(.systemGray6)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
+    }
+}
+
+#Preview {
+    ContentView()
+        .modelContainer(for: [Vehicle.self, FuelingRecord.self], inMemory: true)
+}
+

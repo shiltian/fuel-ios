@@ -1,0 +1,30 @@
+# Context directory (AI assistant notes)
+.context/
+
+# Xcode
+build/
+DerivedData/
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+xcuserdata/
+
+# Swift Package Manager
+.build/
+Packages/
+Package.resolved
+*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+
+# CocoaPods
+Pods/
+
+# macOS
+.DS_Store
+*.swp
+*~.nib
+
+# App packaging
+*.ipa
+*.dSYM.zip
+*.dSYM
+

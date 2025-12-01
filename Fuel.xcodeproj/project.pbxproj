@@ -1,0 +1,453 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A1000001296A0001 /* FuelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000002296A0001 /* FuelApp.swift */; };
+		A1000003296A0001 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000004296A0001 /* ContentView.swift */; };
+		A1000005296A0001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000006296A0001 /* Assets.xcassets */; };
+		A1000007296A0001 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000008296A0001 /* Preview Assets.xcassets */; };
+		A1000009296A0001 /* Vehicle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000A296A0001 /* Vehicle.swift */; };
+		A100000B296A0001 /* FuelingRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000C296A0001 /* FuelingRecord.swift */; };
+		A100000D296A0001 /* VehicleListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000E296A0001 /* VehicleListView.swift */; };
+		A100000F296A0001 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000010296A0001 /* DashboardView.swift */; };
+		A1000011296A0001 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000012296A0001 /* HistoryView.swift */; };
+		A1000013296A0001 /* AddRecordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000014296A0001 /* AddRecordView.swift */; };
+		A1000015296A0001 /* FuelingSummaryPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000016296A0001 /* FuelingSummaryPopup.swift */; };
+		A1000017296A0001 /* CSVService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000018296A0001 /* CSVService.swift */; };
+		A1000019296A0001 /* StatisticsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100001A296A0001 /* StatisticsViewModel.swift */; };
+		A100001B296A0001 /* AddVehicleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100001C296A0001 /* AddVehicleView.swift */; };
+		A100001D296A0001 /* ChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100001E296A0001 /* ChartView.swift */; };
+		A100001F296A0001 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000020296A0001 /* Extensions.swift */; };
+		A1000021296A0001 /* EditRecordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000022296A0001 /* EditRecordView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A1000000296A0001 /* Fuel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Fuel.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1000002296A0001 /* FuelApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FuelApp.swift; sourceTree = "<group>"; };
+		A1000004296A0001 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A1000006296A0001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A1000008296A0001 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		A100000A296A0001 /* Vehicle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vehicle.swift; sourceTree = "<group>"; };
+		A100000C296A0001 /* FuelingRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FuelingRecord.swift; sourceTree = "<group>"; };
+		A100000E296A0001 /* VehicleListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleListView.swift; sourceTree = "<group>"; };
+		A1000010296A0001 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		A1000012296A0001 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+		A1000014296A0001 /* AddRecordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRecordView.swift; sourceTree = "<group>"; };
+		A1000016296A0001 /* FuelingSummaryPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FuelingSummaryPopup.swift; sourceTree = "<group>"; };
+		A1000018296A0001 /* CSVService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVService.swift; sourceTree = "<group>"; };
+		A100001A296A0001 /* StatisticsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewModel.swift; sourceTree = "<group>"; };
+		A100001C296A0001 /* AddVehicleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddVehicleView.swift; sourceTree = "<group>"; };
+		A100001E296A0001 /* ChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartView.swift; sourceTree = "<group>"; };
+		A1000020296A0001 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		A1000022296A0001 /* EditRecordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditRecordView.swift; sourceTree = "<group>"; };
+		A1000023296A0001 /* Fuel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Fuel.entitlements; sourceTree = "<group>"; };
+		A1000024296A0001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A10000FD296A0001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A1000000296A0002 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A1000000296A0001 /* Fuel.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A1000001296A0002 /* Fuel */ = {
+			isa = PBXGroup;
+			children = (
+				A1000023296A0001 /* Fuel.entitlements */,
+				A1000024296A0001 /* Info.plist */,
+				A1000002296A0001 /* FuelApp.swift */,
+				A1000004296A0001 /* ContentView.swift */,
+				A1000002296A0002 /* Models */,
+				A1000003296A0002 /* Views */,
+				A1000004296A0002 /* ViewModels */,
+				A1000005296A0002 /* Services */,
+				A1000006296A0002 /* Extensions */,
+				A1000006296A0001 /* Assets.xcassets */,
+				A1000007296A0002 /* Preview Content */,
+			);
+			path = Fuel;
+			sourceTree = "<group>";
+		};
+		A1000002296A0002 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A100000A296A0001 /* Vehicle.swift */,
+				A100000C296A0001 /* FuelingRecord.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A1000003296A0002 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A100000E296A0001 /* VehicleListView.swift */,
+				A100001C296A0001 /* AddVehicleView.swift */,
+				A1000010296A0001 /* DashboardView.swift */,
+				A1000012296A0001 /* HistoryView.swift */,
+				A1000014296A0001 /* AddRecordView.swift */,
+				A1000022296A0001 /* EditRecordView.swift */,
+				A1000016296A0001 /* FuelingSummaryPopup.swift */,
+				A100001E296A0001 /* ChartView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		A1000004296A0002 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				A100001A296A0001 /* StatisticsViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		A1000005296A0002 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				A1000018296A0001 /* CSVService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		A1000006296A0002 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				A1000020296A0001 /* Extensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		A1000007296A0002 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				A1000008296A0001 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		A10000F7296A0001 = {
+			isa = PBXGroup;
+			children = (
+				A1000001296A0002 /* Fuel */,
+				A1000000296A0002 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A10000FF296A0001 /* Fuel */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1000109296A0001 /* Build configuration list for PBXNativeTarget "Fuel" */;
+			buildPhases = (
+				A10000FC296A0001 /* Sources */,
+				A10000FD296A0001 /* Frameworks */,
+				A10000FE296A0001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Fuel;
+			productName = Fuel;
+			productReference = A1000000296A0001 /* Fuel.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A10000F8296A0001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					A10000FF296A0001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = A10000FB296A0001 /* Build configuration list for PBXProject "Fuel" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A10000F7296A0001;
+			productRefGroup = A1000000296A0002 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A10000FF296A0001 /* Fuel */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A10000FE296A0001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000007296A0001 /* Preview Assets.xcassets in Resources */,
+				A1000005296A0001 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A10000FC296A0001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000001296A0001 /* FuelApp.swift in Sources */,
+				A1000003296A0001 /* ContentView.swift in Sources */,
+				A1000009296A0001 /* Vehicle.swift in Sources */,
+				A100000B296A0001 /* FuelingRecord.swift in Sources */,
+				A100000D296A0001 /* VehicleListView.swift in Sources */,
+				A100000F296A0001 /* DashboardView.swift in Sources */,
+				A1000011296A0001 /* HistoryView.swift in Sources */,
+				A1000013296A0001 /* AddRecordView.swift in Sources */,
+				A1000015296A0001 /* FuelingSummaryPopup.swift in Sources */,
+				A1000017296A0001 /* CSVService.swift in Sources */,
+				A1000019296A0001 /* StatisticsViewModel.swift in Sources */,
+				A100001B296A0001 /* AddVehicleView.swift in Sources */,
+				A100001D296A0001 /* ChartView.swift in Sources */,
+				A100001F296A0001 /* Extensions.swift in Sources */,
+				A1000021296A0001 /* EditRecordView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A1000107296A0001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		A1000108296A0001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A100010A296A0001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Fuel/Fuel.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Fuel/Preview Content\"";
+				DEVELOPMENT_TEAM = F9M3UZ669L;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Fuel/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Fuel;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = me.tianshilei.fuel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A100010B296A0001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Fuel/Fuel.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Fuel/Preview Content\"";
+				DEVELOPMENT_TEAM = F9M3UZ669L;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Fuel/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Fuel;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = me.tianshilei.fuel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A10000FB296A0001 /* Build configuration list for PBXProject "Fuel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1000107296A0001 /* Debug */,
+				A1000108296A0001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1000109296A0001 /* Build configuration list for PBXNativeTarget "Fuel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A100010A296A0001 /* Debug */,
+				A100010B296A0001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A10000F8296A0001 /* Project object */;
+}
