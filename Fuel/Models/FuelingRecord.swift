@@ -86,7 +86,7 @@ final class FuelingRecord {
 
 // MARK: - CSV Export/Import Support
 extension FuelingRecord {
-    static let csvHeader = "id,date,currentMiles,previousMiles,pricePerGallon,gallons,totalCost,isPartialFillUp,isInitialRecord,notes,vehicleId"
+    static let csvHeader = "id,date,currentMiles,previousMiles,pricePerGallon,gallons,totalCost,isPartialFillUp,notes,vehicleId"
 
     func toCSVRow(vehicleId: UUID?) -> String {
         let dateFormatter = ISO8601DateFormatter()
@@ -94,7 +94,7 @@ extension FuelingRecord {
         let notesEscaped = (notes ?? "").replacingOccurrences(of: "\"", with: "\"\"")
         let vehicleIdString = vehicleId?.uuidString ?? ""
 
-        return "\(id.uuidString),\(dateString),\(currentMiles),\(previousMiles),\(pricePerGallon),\(gallons),\(totalCost),\(isPartialFillUp),\(isInitialRecord),\"\(notesEscaped)\",\(vehicleIdString)"
+        return "\(id.uuidString),\(dateString),\(currentMiles),\(previousMiles),\(pricePerGallon),\(gallons),\(totalCost),\(isPartialFillUp),\"\(notesEscaped)\",\(vehicleIdString)"
     }
 
     static func fromCSVRow(_ row: String) -> (record: FuelingRecord, vehicleId: UUID?)? {
@@ -114,20 +114,8 @@ extension FuelingRecord {
         }
 
         let isPartialFillUp = components[7].lowercased() == "true"
-        // Support both old format (without isInitialRecord) and new format
-        let isInitialRecord: Bool
-        let notesIndex: Int
-        if components.count >= 11 {
-            // New format: has isInitialRecord field
-            isInitialRecord = components[8].lowercased() == "true"
-            notesIndex = 9
-        } else {
-            // Old format: no isInitialRecord field, default to false
-            isInitialRecord = false
-            notesIndex = 8
-        }
-        let notes = components[notesIndex].isEmpty ? nil : components[notesIndex]
-        let vehicleId = components.count > notesIndex + 1 ? UUID(uuidString: components[notesIndex + 1]) : nil
+        let notes = components[8].isEmpty ? nil : components[8]
+        let vehicleId = components.count > 9 ? UUID(uuidString: components[9]) : nil
 
         let record = FuelingRecord(
             id: id,
@@ -138,7 +126,6 @@ extension FuelingRecord {
             gallons: gallons,
             totalCost: totalCost,
             isPartialFillUp: isPartialFillUp,
-            isInitialRecord: isInitialRecord,
             notes: notes
         )
 
