@@ -8,6 +8,7 @@ struct ContentView: View {
     @State private var selectedVehicle: Vehicle?
     @State private var showingAddVehicle = false
     @State private var navigationPath = NavigationPath()
+    @State private var hasPerformedInitialNavigation = false
 
     // Store the last viewed vehicle ID
     @AppStorage("lastViewedVehicleID") private var lastViewedVehicleID: String = ""
@@ -36,22 +37,26 @@ struct ContentView: View {
                 AddVehicleView()
             }
             .onAppear {
-                navigateToLastVehicle()
+                navigateToLastVehicleIfNeeded()
             }
             .onChange(of: vehicles) { oldVehicles, newVehicles in
                 // If a new vehicle was added and we were empty before, navigate to it
                 if oldVehicles.isEmpty && !newVehicles.isEmpty {
                     if let first = newVehicles.first {
                         navigationPath.append(first)
+                        hasPerformedInitialNavigation = true
                     }
                 }
             }
         }
     }
 
-    private func navigateToLastVehicle() {
-        // Only navigate if we haven't already and there are vehicles
-        guard navigationPath.isEmpty, !vehicles.isEmpty else { return }
+    private func navigateToLastVehicleIfNeeded() {
+        // Only auto-navigate once on initial app launch
+        guard !hasPerformedInitialNavigation else { return }
+        guard !vehicles.isEmpty else { return }
+
+        hasPerformedInitialNavigation = true
 
         // Try to find the last viewed vehicle
         if !lastViewedVehicleID.isEmpty,
