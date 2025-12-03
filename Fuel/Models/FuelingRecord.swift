@@ -1,6 +1,29 @@
 import Foundation
 import SwiftData
 
+/// Represents the type of fill-up for a fueling record
+enum FillUpType: String, Codable, CaseIterable {
+    case full = "full"        // Normal full tank fill-up
+    case partial = "partial"  // Didn't fill the tank completely (affects NEXT record's MPG)
+    case reset = "reset"      // Missed recording previous fill-up(s) (invalidates THIS record's MPG)
+
+    var displayName: String {
+        switch self {
+        case .full: return "Full Tank"
+        case .partial: return "Partial Fill"
+        case .reset: return "Missed Fueling"
+        }
+    }
+
+    var description: String {
+        switch self {
+        case .full: return "Filled the tank completely"
+        case .partial: return "Didn't fill completely (affects next MPG)"
+        case .reset: return "Missed recording previous fill-up(s)"
+        }
+    }
+}
+
 @Model
 final class FuelingRecord {
     var id: UUID
@@ -9,8 +32,7 @@ final class FuelingRecord {
     var pricePerGallon: Double
     var gallons: Double
     var totalCost: Double
-    var isPartialFillUp: Bool
-    var isReset: Bool  // Missed fueling(s) before this record - invalidates THIS record's MPG
+    var fillUpTypeRaw: String  // Stored as String for SwiftData compatibility
     var notes: String?
     var createdAt: Date
 
@@ -23,6 +45,17 @@ final class FuelingRecord {
     var cachedMPG: Double?
     var cachedCostPerMile: Double?
 
+    // MARK: - Fill-up Type Accessor
+    var fillUpType: FillUpType {
+        get { FillUpType(rawValue: fillUpTypeRaw) ?? .full }
+        set { fillUpTypeRaw = newValue.rawValue }
+    }
+
+    // Convenience computed properties for checking fill-up type
+    var isPartialFillUp: Bool { fillUpType == .partial }
+    var isReset: Bool { fillUpType == .reset }
+    var isFullFillUp: Bool { fillUpType == .full }
+
     init(
         id: UUID = UUID(),
         date: Date = Date(),
@@ -30,8 +63,7 @@ final class FuelingRecord {
         pricePerGallon: Double,
         gallons: Double,
         totalCost: Double,
-        isPartialFillUp: Bool = false,
-        isReset: Bool = false,
+        fillUpType: FillUpType = .full,
         notes: String? = nil,
         createdAt: Date = Date()
     ) {
@@ -41,8 +73,7 @@ final class FuelingRecord {
         self.pricePerGallon = pricePerGallon
         self.gallons = gallons
         self.totalCost = totalCost
-        self.isPartialFillUp = isPartialFillUp
-        self.isReset = isReset
+        self.fillUpTypeRaw = fillUpType.rawValue
         self.notes = notes
         self.createdAt = createdAt
     }
@@ -130,14 +161,14 @@ final class FuelingRecord {
 
 // MARK: - CSV Export/Import Support
 extension FuelingRecord {
-    static let csvHeader = "date,currentMiles,pricePerGallon,gallons,totalCost,isPartialFillUp,isReset,notes"
+    static let csvHeader = "date,currentMiles,pricePerGallon,gallons,totalCost,fillUpType,notes"
 
     func toCSVRow() -> String {
         let dateFormatter = ISO8601DateFormatter()
         let dateString = dateFormatter.string(from: date)
         let notesEscaped = (notes ?? "").replacingOccurrences(of: "\"", with: "\"\"")
 
-        return "\(dateString),\(currentMiles),\(pricePerGallon),\(gallons),\(totalCost),\(isPartialFillUp),\(isReset),\"\(notesEscaped)\""
+        return "\(dateString),\(currentMiles),\(pricePerGallon),\(gallons),\(totalCost),\(fillUpType.rawValue),\"\(notesEscaped)\""
     }
 
     static func fromCSVRow(_ row: String) -> FuelingRecord? {
@@ -154,9 +185,24 @@ extension FuelingRecord {
             return nil
         }
 
-        let isPartialFillUp = components.count > 5 ? components[5].lowercased() == "true" : false
-        let isReset = components.count > 6 ? components[6].lowercased() == "true" : false
-        let notes = components.count > 7 && !components[7].isEmpty ? components[7] : nil
+        // Parse fillUpType - supports new format and legacy boolean format
+        let fillUpType: FillUpType
+        if components.count > 5 {
+            let typeValue = components[5].lowercased()
+            if let parsed = FillUpType(rawValue: typeValue) {
+                // New format: full, partial, reset
+                fillUpType = parsed
+            } else if typeValue == "true" {
+                // Legacy format: isPartialFillUp was true
+                fillUpType = .partial
+            } else {
+                fillUpType = .full
+            }
+        } else {
+            fillUpType = .full
+        }
+
+        let notes = components.count > 6 && !components[6].isEmpty ? components[6] : nil
 
         return FuelingRecord(
             date: date,
@@ -164,8 +210,7 @@ extension FuelingRecord {
             pricePerGallon: pricePerGallon,
             gallons: gallons,
             totalCost: totalCost,
-            isPartialFillUp: isPartialFillUp,
-            isReset: isReset,
+            fillUpType: fillUpType,
             notes: notes
         )
     }

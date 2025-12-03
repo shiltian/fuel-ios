@@ -138,7 +138,7 @@ struct FuelingRecordRow: View {
     }
 
     private var hasMPG: Bool {
-        previousMiles > 0 && !record.isPartialFillUp && !record.isReset && mpgValue > 0
+        previousMiles > 0 && record.isFullFillUp && mpgValue > 0
     }
 
     var body: some View {
@@ -211,32 +211,9 @@ struct FuelingRecordRow: View {
 
                 Spacer()
 
-                if record.isPartialFillUp {
-                    HStack(spacing: 4) {
-                        Image(systemName: "exclamationmark.triangle.fill")
-                            .font(.caption2)
-                        Text("Partial")
-                            .font(.custom("Avenir Next", size: 11))
-                    }
-                    .foregroundColor(.yellow)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 3)
-                    .background(Color.yellow.opacity(0.15))
-                    .clipShape(Capsule())
-                }
-
-                if record.isReset {
-                    HStack(spacing: 4) {
-                        Image(systemName: "arrow.counterclockwise.circle.fill")
-                            .font(.caption2)
-                        Text("Missed")
-                            .font(.custom("Avenir Next", size: 11))
-                    }
-                    .foregroundColor(.red)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 3)
-                    .background(Color.red.opacity(0.15))
-                    .clipShape(Capsule())
+                // Show fill-up type badge for non-full fill-ups
+                if !record.isFullFillUp {
+                    FillUpTypeBadge(fillUpType: record.fillUpType)
                 }
             }
 
@@ -278,6 +255,48 @@ struct DetailChip: View {
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
         .background(color.opacity(0.1))
+        .clipShape(Capsule())
+    }
+}
+
+struct FillUpTypeBadge: View {
+    let fillUpType: FillUpType
+
+    private var icon: String {
+        switch fillUpType {
+        case .full: return "fuelpump.fill"
+        case .partial: return "exclamationmark.triangle.fill"
+        case .reset: return "arrow.counterclockwise.circle.fill"
+        }
+    }
+
+    private var color: Color {
+        switch fillUpType {
+        case .full: return .green
+        case .partial: return .yellow
+        case .reset: return .red
+        }
+    }
+
+    private var label: String {
+        switch fillUpType {
+        case .full: return "Full"
+        case .partial: return "Partial"
+        case .reset: return "Missed"
+        }
+    }
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Image(systemName: icon)
+                .font(.caption2)
+            Text(label)
+                .font(.custom("Avenir Next", size: 11))
+        }
+        .foregroundColor(color)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 3)
+        .background(color.opacity(0.15))
         .clipShape(Capsule())
     }
 }

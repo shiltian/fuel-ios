@@ -14,8 +14,7 @@ struct AddRecordView: View {
     @State private var pricePerGallonString = ""
     @State private var gallonsString = ""
     @State private var totalCostString = ""
-    @State private var isPartialFillUp = false
-    @State private var isReset = false
+    @State private var fillUpType: FillUpType = .full
     @State private var notes = ""
 
     // Track which field to calculate (the one NOT being edited)
@@ -223,31 +222,23 @@ struct AddRecordView: View {
                     }
                 }
 
-                // Options Section
+                // Fill-up Type Section
                 Section {
-                    Toggle(isOn: $isPartialFillUp) {
-                        HStack {
-                            Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundColor(.yellow)
-                            Text("Partial Fill-up")
-                                .font(.custom("Avenir Next", size: 16))
+                    Picker("Fill-up Type", selection: $fillUpType) {
+                        ForEach(FillUpType.allCases, id: \.self) { type in
+                            HStack {
+                                Image(systemName: fillUpTypeIcon(type))
+                                    .foregroundColor(fillUpTypeColor(type))
+                                Text(type.displayName)
+                            }
+                            .tag(type)
                         }
                     }
-
-                    Toggle(isOn: $isReset) {
-                        HStack {
-                            Image(systemName: "arrow.counterclockwise.circle.fill")
-                                .foregroundColor(.red)
-                            Text("Missed Fueling")
-                                .font(.custom("Avenir Next", size: 16))
-                        }
-                    }
+                    .font(.custom("Avenir Next", size: 16))
+                    .pickerStyle(.menu)
                 } footer: {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("• Partial: You didn't fill the tank completely this time.")
-                        Text("• Missed Fueling: You forgot to record one or more fill-ups before this one.")
-                    }
-                    .font(.custom("Avenir Next", size: 12))
+                    Text(fillUpType.description)
+                        .font(.custom("Avenir Next", size: 12))
                 }
 
                 // Notes Section
@@ -370,6 +361,7 @@ struct AddRecordView: View {
 
         // First record (no previous miles) is always treated as partial since we can't calculate MPG
         let isFirstRecord = previousMiles == 0
+        let effectiveFillUpType: FillUpType = isFirstRecord ? .partial : fillUpType
 
         let record = FuelingRecord(
             date: date,
@@ -377,8 +369,7 @@ struct AddRecordView: View {
             pricePerGallon: price,
             gallons: gal,
             totalCost: cost,
-            isPartialFillUp: isPartialFillUp || isFirstRecord,
-            isReset: isReset,
+            fillUpType: effectiveFillUpType,
             notes: notes.isEmpty ? nil : notes
         )
 
@@ -390,6 +381,24 @@ struct AddRecordView: View {
 
         onSave?(record, previousMiles)
         dismiss()
+    }
+
+    // MARK: - Helper Functions
+
+    private func fillUpTypeIcon(_ type: FillUpType) -> String {
+        switch type {
+        case .full: return "fuelpump.fill"
+        case .partial: return "exclamationmark.triangle.fill"
+        case .reset: return "arrow.counterclockwise.circle.fill"
+        }
+    }
+
+    private func fillUpTypeColor(_ type: FillUpType) -> Color {
+        switch type {
+        case .full: return .green
+        case .partial: return .yellow
+        case .reset: return .red
+        }
     }
 }
 

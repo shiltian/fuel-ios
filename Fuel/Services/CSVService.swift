@@ -57,7 +57,7 @@ enum CSVService {
     }
 
     /// Parse a simple CSV file format (for manual data entry or basic imports)
-    /// Expected format: date,currentMiles,pricePerGallon,gallons,totalCost,isPartialFillUp,notes
+    /// Expected format: date,currentMiles,pricePerGallon,gallons,totalCost,fillUpType,notes
     /// - Parameter content: CSV formatted string
     /// - Returns: Array of FuelingRecord
     static func importSimpleFormat(from content: String) -> [FuelingRecord] {
@@ -96,7 +96,23 @@ enum CSVService {
                 continue
             }
 
-            let isPartialFillUp = components.count > 5 ? components[5].lowercased() == "true" : false
+            // Parse fillUpType - supports new format and legacy boolean format
+            let fillUpType: FillUpType
+            if components.count > 5 {
+                let typeValue = components[5].lowercased()
+                if let parsed = FillUpType(rawValue: typeValue) {
+                    // New format: full, partial, reset
+                    fillUpType = parsed
+                } else if typeValue == "true" {
+                    // Legacy format: isPartialFillUp was true
+                    fillUpType = .partial
+                } else {
+                    fillUpType = .full
+                }
+            } else {
+                fillUpType = .full
+            }
+
             let notes = components.count > 6 && !components[6].isEmpty ? components[6] : nil
 
             let record = FuelingRecord(
@@ -105,7 +121,7 @@ enum CSVService {
                 pricePerGallon: pricePerGallon,
                 gallons: gallons,
                 totalCost: totalCost,
-                isPartialFillUp: isPartialFillUp,
+                fillUpType: fillUpType,
                 notes: notes
             )
 
@@ -169,9 +185,9 @@ enum CSVService {
     /// - Returns: CSV formatted string with headers and example row
     static func generateTemplate() -> String {
         """
-        date,currentMiles,pricePerGallon,gallons,totalCost,isPartialFillUp,notes
-        2024-01-15,12500,3.459,10.5,36.32,false,"First fill-up of the year"
-        2024-01-22,12800,3.399,11.2,38.07,false,""
+        date,currentMiles,pricePerGallon,gallons,totalCost,fillUpType,notes
+        2024-01-15,12500,3.459,10.5,36.32,full,"First fill-up of the year"
+        2024-01-22,12800,3.399,11.2,38.07,full,""
         """
     }
 }

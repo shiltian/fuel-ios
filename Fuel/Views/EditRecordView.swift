@@ -14,8 +14,7 @@ struct EditRecordView: View {
     @State private var pricePerGallonString: String
     @State private var gallonsString: String
     @State private var totalCostString: String
-    @State private var isPartialFillUp: Bool
-    @State private var isReset: Bool
+    @State private var fillUpType: FillUpType
     @State private var notes: String
 
     @FocusState private var focusedField: EditableField?
@@ -36,8 +35,7 @@ struct EditRecordView: View {
         _pricePerGallonString = State(initialValue: String(format: "%.3f", record.pricePerGallon))
         _gallonsString = State(initialValue: String(format: "%.2f", record.gallons))
         _totalCostString = State(initialValue: String(format: "%.2f", record.totalCost))
-        _isPartialFillUp = State(initialValue: record.isPartialFillUp)
-        _isReset = State(initialValue: record.isReset)
+        _fillUpType = State(initialValue: record.fillUpType)
         _notes = State(initialValue: record.notes ?? "")
     }
 
@@ -153,31 +151,23 @@ struct EditRecordView: View {
                         .font(.custom("Avenir Next", size: 12))
                 }
 
-                // Options Section
+                // Fill-up Type Section
                 Section {
-                    Toggle(isOn: $isPartialFillUp) {
-                        HStack {
-                            Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundColor(.yellow)
-                            Text("Partial Fill-up")
-                                .font(.custom("Avenir Next", size: 16))
+                    Picker("Fill-up Type", selection: $fillUpType) {
+                        ForEach(FillUpType.allCases, id: \.self) { type in
+                            HStack {
+                                Image(systemName: fillUpTypeIcon(type))
+                                    .foregroundColor(fillUpTypeColor(type))
+                                Text(type.displayName)
+                            }
+                            .tag(type)
                         }
                     }
-
-                    Toggle(isOn: $isReset) {
-                        HStack {
-                            Image(systemName: "arrow.counterclockwise.circle.fill")
-                                .foregroundColor(.red)
-                            Text("Missed Fueling")
-                                .font(.custom("Avenir Next", size: 16))
-                        }
-                    }
+                    .font(.custom("Avenir Next", size: 16))
+                    .pickerStyle(.menu)
                 } footer: {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("• Partial: You didn't fill the tank completely this time.")
-                        Text("• Missed Fueling: You forgot to record one or more fill-ups before this one.")
-                    }
-                    .font(.custom("Avenir Next", size: 12))
+                    Text(fillUpType.description)
+                        .font(.custom("Avenir Next", size: 12))
                 }
 
                 // Notes Section
@@ -300,14 +290,31 @@ struct EditRecordView: View {
         record.pricePerGallon = price
         record.gallons = gal
         record.totalCost = cost
-        record.isPartialFillUp = isPartialFillUp
-        record.isReset = isReset
+        record.fillUpType = fillUpType
         record.notes = notes.isEmpty ? nil : notes
 
         // Full recalculation on edit (as agreed - edits are less frequent)
         StatisticsCacheService.updateForEditedRecord(vehicle: vehicle)
 
         dismiss()
+    }
+
+    // MARK: - Helper Functions
+
+    private func fillUpTypeIcon(_ type: FillUpType) -> String {
+        switch type {
+        case .full: return "fuelpump.fill"
+        case .partial: return "exclamationmark.triangle.fill"
+        case .reset: return "arrow.counterclockwise.circle.fill"
+        }
+    }
+
+    private func fillUpTypeColor(_ type: FillUpType) -> Color {
+        switch type {
+        case .full: return .green
+        case .partial: return .yellow
+        case .reset: return .red
+        }
     }
 }
 

@@ -25,7 +25,10 @@ A native iOS app built with SwiftUI to track your vehicle's fuel consumption, co
 - **Price per Gallon**: Gas price
 - **Gallons**: Amount purchased
 - **Total Cost**: What you paid
-- **Partial Fill-up Toggle**: Mark incomplete fills for accurate MPG
+- **Fill-up Type**: Choose from:
+  - **Full Tank**: Normal complete fill-up (MPG calculated normally)
+  - **Partial Fill**: Didn't fill completely (affects next record's MPG baseline)
+  - **Missed Fueling**: Forgot to record previous fill-up(s) (invalidates this record's MPG)
 - **Notes**: Optional memo for each fill-up
 
 ### 🧮 Smart Auto-Calculation
@@ -59,9 +62,13 @@ After adding a record, see a beautiful summary showing:
 
 ### Export/Import Format
 ```csv
-date,currentMiles,pricePerGallon,gallons,totalCost,isPartialFillUp,notes
-2024-01-15,12500,3.459,10.5,36.32,false,"First fill-up"
+date,currentMiles,pricePerGallon,gallons,totalCost,fillUpType,notes
+2024-01-15,12500,3.459,10.5,36.32,full,"First fill-up"
 ```
+
+Fill-up type values: `full`, `partial`, `reset`
+
+Legacy CSV files with boolean `isPartialFillUp` column are still supported for import.
 
 Previous miles are automatically inferred from the prior record's odometer reading.
 
