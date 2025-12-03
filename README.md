@@ -1,6 +1,6 @@
 # Fuel - Car Fueling Tracker
 
-A native iOS app built with SwiftUI to track your vehicle's fuel consumption, costs, and efficiency.
+A native iOS app built with SwiftUI and SwiftData to track your vehicle's fuel consumption, costs, and efficiency.
 
 ## Features
 
@@ -8,14 +8,18 @@ A native iOS app built with SwiftUI to track your vehicle's fuel consumption, co
 - Track multiple vehicles
 - Each vehicle has its own dashboard and history
 - Easy switching between vehicles
+- Auto-remembers last viewed vehicle
 
 ### 📊 Dashboard
 - **Total Spent**: All-time fuel expenses
 - **Total Miles**: Distance driven since tracking began
 - **Total Gallons**: Fuel consumed
-- **Average MPG**: Fuel efficiency (excludes partial fill-ups for accuracy)
+- **Average MPG**: Fuel efficiency (calculated from full fill-ups for accuracy)
 - **Average $/Mile**: Cost per mile driven
 - **Average Fill-up Cost**: Typical fill-up expense
+- **Average $/Gallon**: Average price per gallon across all fill-ups
+- **Best/Worst MPG**: Track your fuel efficiency extremes
+- **Highest/Lowest Gas Prices**: Track price fluctuations
 - **Last Fill-up**: Quick view of most recent fueling
 - **Trend Charts**: Visual graphs for MPG, cost, and gas prices over time
 
@@ -46,6 +50,12 @@ After adding a record, see a beautiful summary showing:
 ### 📤 Import/Export
 - **Export to CSV**: Share your data or backup
 - **Import from CSV**: Migrate from other apps or spreadsheets
+- **Open CSV directly**: Open CSV files from iOS Files app or via Share sheet
+
+### ⚙️ Settings
+- View app version and build number
+- See data statistics (vehicle count, record count)
+- Delete all data option with confirmation
 
 ## Requirements
 
@@ -54,9 +64,16 @@ After adding a record, see a beautiful summary showing:
 
 ## Installation
 
-1. Open `Fuel/Fuel.xcodeproj` in Xcode
+1. Open `Fuel.xcodeproj` in Xcode
 2. Select your development team in Signing & Capabilities (optional, for device testing)
 3. Build and run on your device or simulator
+
+## Technical Details
+
+- Built with **SwiftUI** for modern, declarative UI
+- Uses **SwiftData** for efficient on-device persistence
+- Optimized **statistics caching** for fast dashboard rendering
+- Charts optimized for large datasets with automatic bucket averaging
 
 ## CSV Format
 
@@ -80,4 +97,3 @@ Supported date formats:
 ## License
 
 MIT License - Feel free to use and modify as needed.
-
