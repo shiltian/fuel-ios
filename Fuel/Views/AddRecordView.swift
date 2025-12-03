@@ -15,6 +15,7 @@ struct AddRecordView: View {
     @State private var gallonsString = ""
     @State private var totalCostString = ""
     @State private var isPartialFillUp = false
+    @State private var isReset = false
     @State private var notes = ""
 
     // Track which field to calculate (the one NOT being edited)
@@ -232,9 +233,21 @@ struct AddRecordView: View {
                                 .font(.custom("Avenir Next", size: 16))
                         }
                     }
+
+                    Toggle(isOn: $isReset) {
+                        HStack {
+                            Image(systemName: "arrow.counterclockwise.circle.fill")
+                                .foregroundColor(.red)
+                            Text("Missed Fueling")
+                                .font(.custom("Avenir Next", size: 16))
+                        }
+                    }
                 } footer: {
-                    Text("Mark if you didn't fill the tank completely. MPG calculations will be less accurate for partial fill-ups.")
-                        .font(.custom("Avenir Next", size: 12))
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("• Partial: You didn't fill the tank completely this time.")
+                        Text("• Missed Fueling: You forgot to record one or more fill-ups before this one.")
+                    }
+                    .font(.custom("Avenir Next", size: 12))
                 }
 
                 // Notes Section
@@ -365,6 +378,7 @@ struct AddRecordView: View {
             gallons: gal,
             totalCost: cost,
             isPartialFillUp: isPartialFillUp || isFirstRecord,
+            isReset: isReset,
             notes: notes.isEmpty ? nil : notes
         )
 

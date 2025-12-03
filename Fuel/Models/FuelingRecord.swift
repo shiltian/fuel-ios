@@ -10,6 +10,7 @@ final class FuelingRecord {
     var gallons: Double
     var totalCost: Double
     var isPartialFillUp: Bool
+    var isReset: Bool  // Missed fueling(s) before this record - invalidates THIS record's MPG
     var notes: String?
     var createdAt: Date
 
@@ -30,6 +31,7 @@ final class FuelingRecord {
         gallons: Double,
         totalCost: Double,
         isPartialFillUp: Bool = false,
+        isReset: Bool = false,
         notes: String? = nil,
         createdAt: Date = Date()
     ) {
@@ -40,6 +42,7 @@ final class FuelingRecord {
         self.gallons = gallons
         self.totalCost = totalCost
         self.isPartialFillUp = isPartialFillUp
+        self.isReset = isReset
         self.notes = notes
         self.createdAt = createdAt
     }
@@ -67,7 +70,7 @@ final class FuelingRecord {
             return cached
         }
         let miles = getMilesDriven()
-        guard gallons > 0, miles > 0, !isPartialFillUp else { return 0 }
+        guard gallons > 0, miles > 0, !isPartialFillUp, !isReset else { return 0 }
         return miles / gallons
     }
 
@@ -127,14 +130,14 @@ final class FuelingRecord {
 
 // MARK: - CSV Export/Import Support
 extension FuelingRecord {
-    static let csvHeader = "date,currentMiles,pricePerGallon,gallons,totalCost,isPartialFillUp,notes"
+    static let csvHeader = "date,currentMiles,pricePerGallon,gallons,totalCost,isPartialFillUp,isReset,notes"
 
     func toCSVRow() -> String {
         let dateFormatter = ISO8601DateFormatter()
         let dateString = dateFormatter.string(from: date)
         let notesEscaped = (notes ?? "").replacingOccurrences(of: "\"", with: "\"\"")
 
-        return "\(dateString),\(currentMiles),\(pricePerGallon),\(gallons),\(totalCost),\(isPartialFillUp),\"\(notesEscaped)\""
+        return "\(dateString),\(currentMiles),\(pricePerGallon),\(gallons),\(totalCost),\(isPartialFillUp),\(isReset),\"\(notesEscaped)\""
     }
 
     static func fromCSVRow(_ row: String) -> FuelingRecord? {
@@ -152,7 +155,8 @@ extension FuelingRecord {
         }
 
         let isPartialFillUp = components.count > 5 ? components[5].lowercased() == "true" : false
-        let notes = components.count > 6 && !components[6].isEmpty ? components[6] : nil
+        let isReset = components.count > 6 ? components[6].lowercased() == "true" : false
+        let notes = components.count > 7 && !components[7].isEmpty ? components[7] : nil
 
         return FuelingRecord(
             date: date,
@@ -161,6 +165,7 @@ extension FuelingRecord {
             gallons: gallons,
             totalCost: totalCost,
             isPartialFillUp: isPartialFillUp,
+            isReset: isReset,
             notes: notes
         )
     }

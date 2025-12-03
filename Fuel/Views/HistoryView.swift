@@ -138,7 +138,7 @@ struct FuelingRecordRow: View {
     }
 
     private var hasMPG: Bool {
-        previousMiles > 0 && !record.isPartialFillUp && mpgValue > 0
+        previousMiles > 0 && !record.isPartialFillUp && !record.isReset && mpgValue > 0
     }
 
     var body: some View {
@@ -222,6 +222,20 @@ struct FuelingRecordRow: View {
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
                     .background(Color.yellow.opacity(0.15))
+                    .clipShape(Capsule())
+                }
+
+                if record.isReset {
+                    HStack(spacing: 4) {
+                        Image(systemName: "arrow.counterclockwise.circle.fill")
+                            .font(.caption2)
+                        Text("Missed")
+                            .font(.custom("Avenir Next", size: 11))
+                    }
+                    .foregroundColor(.red)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(Color.red.opacity(0.15))
                     .clipShape(Capsule())
                 }
             }

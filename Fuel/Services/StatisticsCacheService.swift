@@ -55,9 +55,10 @@ final class StatisticsCacheService {
                 record.cachedMilesDriven = 0
             }
 
-            // Calculate MPG (only for full fill-ups where previous was also full)
+            // Calculate MPG (only for full fill-ups where previous was also full, and not a reset)
+            // Reset means missed fueling(s) before this record, so we can't trust the miles driven
             let mpg: Double
-            if !record.isPartialFillUp && previousWasFullFillUp && milesDriven > 0 && record.gallons > 0 {
+            if !record.isPartialFillUp && !record.isReset && previousWasFullFillUp && milesDriven > 0 && record.gallons > 0 {
                 mpg = milesDriven / record.gallons
                 record.cachedMPG = mpg
 
@@ -182,7 +183,8 @@ final class StatisticsCacheService {
         record.cachedMilesDriven = milesDriven > 0 ? milesDriven : 0
 
         // Calculate MPG if applicable
-        if !record.isPartialFillUp && !previousRecord.isPartialFillUp && milesDriven > 0 && record.gallons > 0 {
+        // Reset means missed fueling(s) before this record, so we can't trust the miles driven
+        if !record.isPartialFillUp && !record.isReset && !previousRecord.isPartialFillUp && milesDriven > 0 && record.gallons > 0 {
             let mpg = milesDriven / record.gallons
             record.cachedMPG = mpg
 
