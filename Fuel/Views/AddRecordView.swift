@@ -104,7 +104,7 @@ struct AddRecordView: View {
                             .frame(width: 120)
                     }
 
-                    if let current = currentMiles, current > previousMiles {
+                    if previousMiles > 0, let current = currentMiles, current > previousMiles {
                         HStack {
                             Text("Miles This Trip")
                                 .font(.custom("Avenir Next", size: 16))
@@ -120,7 +120,7 @@ struct AddRecordView: View {
                     Text("Odometer")
                         .font(.custom("Avenir Next", size: 12))
                 } footer: {
-                    if currentMiles != nil && currentMiles! <= previousMiles && previousMiles > 0 {
+                    if previousMiles > 0 && currentMiles != nil && currentMiles! <= previousMiles {
                         Text("Odometer must be greater than last recorded (\(previousMiles.formatted(.number.precision(.fractionLength(0)))) mi)")
                             .foregroundColor(.red)
                     }
@@ -187,7 +187,7 @@ struct AddRecordView: View {
                 }
 
                 // Preview Section
-                if previewMPG != nil || previewCostPerMile != nil {
+                if previousMiles > 0 && (previewMPG != nil || previewCostPerMile != nil) {
                     Section {
                         if let mpg = previewMPG {
                             HStack {
@@ -355,13 +355,16 @@ struct AddRecordView: View {
               let gal = gallons,
               let cost = totalCost else { return }
 
+        // First record (no previous miles) is always treated as partial since we can't calculate MPG
+        let isFirstRecord = previousMiles == 0
+
         let record = FuelingRecord(
             date: date,
             currentMiles: current,
             pricePerGallon: price,
             gallons: gal,
             totalCost: cost,
-            isPartialFillUp: isPartialFillUp,
+            isPartialFillUp: isPartialFillUp || isFirstRecord,
             notes: notes.isEmpty ? nil : notes
         )
 

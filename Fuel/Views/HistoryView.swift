@@ -172,11 +172,13 @@ struct FuelingRecordRow: View {
                     color: .orange
                 )
 
-                DetailChip(
-                    icon: "gauge",
-                    value: "\(record.mpg(previousMiles: previousMiles).formatted(.number.precision(.fractionLength(1)))) MPG",
-                    color: .purple
-                )
+                if previousMiles > 0 {
+                    DetailChip(
+                        icon: "gauge",
+                        value: "\(record.mpg(previousMiles: previousMiles).formatted(.number.precision(.fractionLength(1)))) MPG",
+                        color: .purple
+                    )
+                }
 
                 Spacer()
             }
@@ -187,13 +189,19 @@ struct FuelingRecordRow: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
 
-                Text("\(previousMiles.formatted(.number.precision(.fractionLength(0)))) → \(record.currentMiles.formatted(.number.precision(.fractionLength(0)))) mi")
-                    .font(.custom("Avenir Next", size: 12))
-                    .foregroundColor(.secondary)
+                if previousMiles > 0 {
+                    Text("\(previousMiles.formatted(.number.precision(.fractionLength(0)))) → \(record.currentMiles.formatted(.number.precision(.fractionLength(0)))) mi")
+                        .font(.custom("Avenir Next", size: 12))
+                        .foregroundColor(.secondary)
 
-                Text("(\(record.milesDriven(previousMiles: previousMiles).formatted(.number.precision(.fractionLength(0)))) miles)")
-                    .font(.custom("Avenir Next", size: 12))
-                    .foregroundColor(.secondary.opacity(0.8))
+                    Text("(\(record.milesDriven(previousMiles: previousMiles).formatted(.number.precision(.fractionLength(0)))) miles)")
+                        .font(.custom("Avenir Next", size: 12))
+                        .foregroundColor(.secondary.opacity(0.8))
+                } else {
+                    Text("\(record.currentMiles.formatted(.number.precision(.fractionLength(0)))) mi")
+                        .font(.custom("Avenir Next", size: 12))
+                        .foregroundColor(.secondary)
+                }
 
                 Spacer()
 

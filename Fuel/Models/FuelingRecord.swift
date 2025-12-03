@@ -39,21 +39,24 @@ final class FuelingRecord {
 
     // MARK: - Calculated Properties (require previous miles from prior record)
 
-    /// Miles driven since last fill-up
+    /// Miles driven since last fill-up (returns 0 if no valid previous record)
     func milesDriven(previousMiles: Double) -> Double {
-        currentMiles - previousMiles
+        guard previousMiles > 0 else { return 0 }
+        return currentMiles - previousMiles
     }
 
-    /// Miles per gallon for this fill-up
+    /// Miles per gallon for this fill-up (returns 0 if no valid previous record)
     func mpg(previousMiles: Double) -> Double {
-        let miles = milesDriven(previousMiles: previousMiles)
+        guard previousMiles > 0 else { return 0 }
+        let miles = currentMiles - previousMiles
         guard gallons > 0, miles > 0 else { return 0 }
         return miles / gallons
     }
 
-    /// Cost per mile for this fill-up
+    /// Cost per mile for this fill-up (returns 0 if no valid previous record)
     func costPerMile(previousMiles: Double) -> Double {
-        let miles = milesDriven(previousMiles: previousMiles)
+        guard previousMiles > 0 else { return 0 }
+        let miles = currentMiles - previousMiles
         guard miles > 0 else { return 0 }
         return totalCost / miles
     }

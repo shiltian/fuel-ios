@@ -180,12 +180,22 @@ struct LastFillUpCard: View {
                     .frame(height: 40)
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("\(record.mpg(previousMiles: previousMiles).formatted(.number.precision(.fractionLength(1)))) MPG")
-                        .font(.custom("Avenir Next", size: 18))
-                        .fontWeight(.semibold)
-                    Text("Efficiency")
-                        .font(.custom("Avenir Next", size: 12))
-                        .foregroundColor(.secondary)
+                    if previousMiles > 0 {
+                        Text("\(record.mpg(previousMiles: previousMiles).formatted(.number.precision(.fractionLength(1)))) MPG")
+                            .font(.custom("Avenir Next", size: 18))
+                            .fontWeight(.semibold)
+                        Text("Efficiency")
+                            .font(.custom("Avenir Next", size: 12))
+                            .foregroundColor(.secondary)
+                    } else {
+                        Text("—")
+                            .font(.custom("Avenir Next", size: 18))
+                            .fontWeight(.semibold)
+                            .foregroundColor(.secondary)
+                        Text("Baseline")
+                            .font(.custom("Avenir Next", size: 12))
+                            .foregroundColor(.secondary)
+                    }
                 }
 
                 Spacer()
