@@ -133,6 +133,7 @@ struct ContentView: View {
 
 struct EmptyVehicleView: View {
     @Binding var showingAddVehicle: Bool
+    @State private var showingSettings = false
 
     var body: some View {
         VStack(spacing: 24) {
@@ -182,6 +183,16 @@ struct EmptyVehicleView: View {
                 endPoint: .bottom
             )
         )
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: { showingSettings = true }) {
+                    Image(systemName: "gearshape")
+                }
+            }
+        }
+        .sheet(isPresented: $showingSettings) {
+            SettingsView()
+        }
     }
 }
 
