@@ -22,16 +22,6 @@ struct HistoryView: View {
         vehicle.sortedRecords
     }
 
-    /// Get the previous miles for a given record (from the record before it in date order)
-    private func previousMiles(for record: FuelingRecord) -> Double {
-        let sortedByDate = records.sorted { $0.date < $1.date }
-        guard let index = sortedByDate.firstIndex(where: { $0.id == record.id }),
-              index > 0 else {
-            return 0
-        }
-        return sortedByDate[index - 1].currentMiles
-    }
-
     private var filteredRecords: [FuelingRecord] {
         var result = records
 
@@ -74,10 +64,10 @@ struct HistoryView: View {
                         .font(.custom("Avenir Next", size: 14))
                     }
 
-                    // Records section
+                    // Records section - use cached previousMiles
                     Section {
                         ForEach(filteredRecords) { record in
-                            FuelingRecordRow(record: record, previousMiles: previousMiles(for: record))
+                            FuelingRecordRow(record: record, previousMiles: record.getPreviousMiles())
                                 .contentShape(Rectangle())
                                 .onTapGesture {
                                     recordToEdit = record
@@ -108,7 +98,7 @@ struct HistoryView: View {
             }
         }
         .sheet(item: $recordToEdit) { record in
-            EditRecordView(record: record)
+            EditRecordView(record: record, vehicle: vehicle)
         }
         .alert("Delete Record", isPresented: $showingDeleteAlert) {
             Button("Cancel", role: .cancel) {
@@ -128,6 +118,8 @@ struct HistoryView: View {
         withAnimation {
             modelContext.delete(record)
             recordToDelete = nil
+            // Update cache after deletion
+            StatisticsCacheService.updateForDeletedRecord(vehicle: vehicle)
         }
     }
 }
@@ -135,6 +127,19 @@ struct HistoryView: View {
 struct FuelingRecordRow: View {
     let record: FuelingRecord
     let previousMiles: Double
+
+    // Use cached values for performance
+    private var mpgValue: Double {
+        record.getMPG()
+    }
+
+    private var milesDriven: Double {
+        record.getMilesDriven()
+    }
+
+    private var hasMPG: Bool {
+        previousMiles > 0 && !record.isPartialFillUp && mpgValue > 0
+    }
 
     var body: some View {
         VStack(spacing: 12) {
@@ -173,10 +178,10 @@ struct FuelingRecordRow: View {
                 )
 
                 // Only show MPG for full fill-ups with valid previous record
-                if previousMiles > 0 && !record.isPartialFillUp {
+                if hasMPG {
                     DetailChip(
                         icon: "gauge",
-                        value: "\(record.mpg(previousMiles: previousMiles).formatted(.number.precision(.fractionLength(1)))) MPG",
+                        value: "\(mpgValue.formatted(.number.precision(.fractionLength(1)))) MPG",
                         color: .purple
                     )
                 }
@@ -195,7 +200,7 @@ struct FuelingRecordRow: View {
                         .font(.custom("Avenir Next", size: 12))
                         .foregroundColor(.secondary)
 
-                    Text("(\(record.milesDriven(previousMiles: previousMiles).formatted(.number.precision(.fractionLength(0)))) miles)")
+                    Text("(\(milesDriven.formatted(.number.precision(.fractionLength(0)))) miles)")
                         .font(.custom("Avenir Next", size: 12))
                         .foregroundColor(.secondary.opacity(0.8))
                 } else {

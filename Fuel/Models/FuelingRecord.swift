@@ -15,6 +15,13 @@ final class FuelingRecord {
 
     var vehicle: Vehicle?
 
+    // MARK: - Cached Computed Values (for performance)
+    // These are pre-computed and stored to avoid O(n²) lookups
+    var cachedPreviousMiles: Double?
+    var cachedMilesDriven: Double?
+    var cachedMPG: Double?
+    var cachedCostPerMile: Double?
+
     init(
         id: UUID = UUID(),
         date: Date = Date(),
@@ -35,6 +42,43 @@ final class FuelingRecord {
         self.isPartialFillUp = isPartialFillUp
         self.notes = notes
         self.createdAt = createdAt
+    }
+
+    // MARK: - Cached Value Accessors
+    // Use cached values if available, otherwise compute on-demand
+
+    /// Get previous miles (cached or computed)
+    func getPreviousMiles(fallback: Double = 0) -> Double {
+        cachedPreviousMiles ?? fallback
+    }
+
+    /// Get miles driven (cached or computed)
+    func getMilesDriven() -> Double {
+        if let cached = cachedMilesDriven {
+            return cached
+        }
+        guard let prevMiles = cachedPreviousMiles, prevMiles > 0 else { return 0 }
+        return currentMiles - prevMiles
+    }
+
+    /// Get MPG (cached or computed)
+    func getMPG() -> Double {
+        if let cached = cachedMPG {
+            return cached
+        }
+        let miles = getMilesDriven()
+        guard gallons > 0, miles > 0, !isPartialFillUp else { return 0 }
+        return miles / gallons
+    }
+
+    /// Get cost per mile (cached or computed)
+    func getCostPerMile() -> Double {
+        if let cached = cachedCostPerMile {
+            return cached
+        }
+        let miles = getMilesDriven()
+        guard miles > 0 else { return 0 }
+        return totalCost / miles
     }
 
     // MARK: - Calculated Properties (require previous miles from prior record)

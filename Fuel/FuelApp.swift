@@ -4,6 +4,7 @@ import SwiftData
 @main
 struct FuelApp: App {
     @State private var importedFileURL: URL?
+    @State private var hasInitializedCache = false
 
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
@@ -28,8 +29,21 @@ struct FuelApp: App {
                 .onOpenURL { url in
                     handleIncomingURL(url)
                 }
+                .task {
+                    // Build/validate cache on startup (runs once)
+                    if !hasInitializedCache {
+                        hasInitializedCache = true
+                        initializeCache()
+                    }
+                }
         }
         .modelContainer(sharedModelContainer)
+    }
+
+    /// Initialize statistics cache on app startup
+    private func initializeCache() {
+        let context = sharedModelContainer.mainContext
+        StatisticsCacheService.rebuildCacheForAllVehicles(in: context)
     }
 
     private func handleIncomingURL(_ url: URL) {

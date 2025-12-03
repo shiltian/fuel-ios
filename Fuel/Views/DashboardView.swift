@@ -4,12 +4,34 @@ import SwiftData
 struct DashboardView: View {
     let vehicle: Vehicle
 
+    // Use cached records to avoid repeated sorting
     private var records: [FuelingRecord] {
         vehicle.sortedRecords
     }
 
-    private var statistics: VehicleStatistics {
-        VehicleStatistics(records: records)
+    // Use cached statistics from the vehicle model
+    private var totalSpent: Double {
+        vehicle.cachedTotalSpent ?? 0
+    }
+
+    private var totalMiles: Double {
+        vehicle.cachedTotalMiles ?? 0
+    }
+
+    private var totalGallons: Double {
+        vehicle.cachedTotalGallons ?? 0
+    }
+
+    private var averageMPG: Double {
+        vehicle.cachedAverageMPG ?? 0
+    }
+
+    private var averageCostPerMile: Double {
+        vehicle.cachedAverageCostPerMile ?? 0
+    }
+
+    private var averageFillUpCost: Double {
+        vehicle.cachedAverageFillUpCost ?? 0
     }
 
     var body: some View {
@@ -22,52 +44,51 @@ struct DashboardView: View {
                 ], spacing: 16) {
                     StatCard(
                         title: "Total Spent",
-                        value: statistics.totalSpent.currencyFormatted,
+                        value: totalSpent.currencyFormatted,
                         icon: "dollarsign.circle.fill",
                         color: .orange
                     )
 
                     StatCard(
                         title: "Total Miles",
-                        value: statistics.totalMiles.formatted(.number.precision(.fractionLength(0))),
+                        value: totalMiles.formatted(.number.precision(.fractionLength(0))),
                         icon: "road.lanes",
                         color: .blue
                     )
 
                     StatCard(
                         title: "Total Gallons",
-                        value: statistics.totalGallons.formatted(.number.precision(.fractionLength(1))),
+                        value: totalGallons.formatted(.number.precision(.fractionLength(1))),
                         icon: "fuelpump.fill",
                         color: .green
                     )
 
                     StatCard(
                         title: "Avg MPG",
-                        value: statistics.averageMPG.formatted(.number.precision(.fractionLength(1))),
+                        value: averageMPG.formatted(.number.precision(.fractionLength(1))),
                         icon: "gauge.with.dots.needle.67percent",
                         color: .purple
                     )
 
                     StatCard(
                         title: "Avg $/Mile",
-                        value: statistics.averageCostPerMile.currencyFormatted,
+                        value: averageCostPerMile.currencyFormatted,
                         icon: "chart.line.uptrend.xyaxis",
                         color: .red
                     )
 
                     StatCard(
                         title: "Avg Fill-up",
-                        value: statistics.averageFillUpCost.currencyFormatted,
+                        value: averageFillUpCost.currencyFormatted,
                         icon: "creditcard.fill",
                         color: .teal
                     )
                 }
                 .padding(.horizontal)
 
-                // Last Fill-up Info
+                // Last Fill-up Info - use cached values
                 if let lastRecord = records.first {
-                    let prevMiles = statistics.previousMiles(for: lastRecord)
-                    LastFillUpCard(record: lastRecord, previousMiles: prevMiles)
+                    LastFillUpCard(record: lastRecord, previousMiles: lastRecord.getPreviousMiles())
                         .padding(.horizontal)
                 }
 
@@ -94,6 +115,10 @@ struct DashboardView: View {
             .padding(.vertical)
         }
         .background(Color(.systemGroupedBackground))
+        .onAppear {
+            // Ensure cache is valid when view appears
+            StatisticsCacheService.ensureCacheValid(for: vehicle)
+        }
     }
 }
 
@@ -136,6 +161,15 @@ struct StatCard: View {
 struct LastFillUpCard: View {
     let record: FuelingRecord
     let previousMiles: Double
+
+    // Use cached MPG if available
+    private var mpgValue: Double {
+        record.getMPG()
+    }
+
+    private var hasMPG: Bool {
+        previousMiles > 0 && !record.isPartialFillUp && mpgValue > 0
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -180,8 +214,8 @@ struct LastFillUpCard: View {
                     .frame(height: 40)
 
                 VStack(alignment: .leading, spacing: 4) {
-                    if previousMiles > 0 && !record.isPartialFillUp {
-                        Text("\(record.mpg(previousMiles: previousMiles).formatted(.number.precision(.fractionLength(1)))) MPG")
+                    if hasMPG {
+                        Text("\(mpgValue.formatted(.number.precision(.fractionLength(1)))) MPG")
                             .font(.custom("Avenir Next", size: 18))
                             .fontWeight(.semibold)
                         Text("Efficiency")
@@ -238,67 +272,6 @@ struct EmptyRecordsView: View {
     }
 }
 
-// MARK: - Statistics Calculator
-
-struct VehicleStatistics {
-    let records: [FuelingRecord]
-
-    /// Get the previous miles for a given record (from the record before it in date order)
-    func previousMiles(for record: FuelingRecord) -> Double {
-        let sortedByDate = records.sorted { $0.date < $1.date }
-        guard let index = sortedByDate.firstIndex(where: { $0.id == record.id }),
-              index > 0 else {
-            return 0
-        }
-        return sortedByDate[index - 1].currentMiles
-    }
-
-    /// Calculate miles driven for a record
-    private func milesDriven(for record: FuelingRecord) -> Double {
-        record.milesDriven(previousMiles: previousMiles(for: record))
-    }
-
-    var totalSpent: Double {
-        records.reduce(0) { $0 + $1.totalCost }
-    }
-
-    var totalMiles: Double {
-        records.reduce(0) { $0 + milesDriven(for: $1) }
-    }
-
-    var totalGallons: Double {
-        records.reduce(0) { $0 + $1.gallons }
-    }
-
-    var averageMPG: Double {
-        // Only calculate from full fill-ups for accuracy
-        let fullFillUps = records.filter { !$0.isPartialFillUp }
-        guard !fullFillUps.isEmpty else {
-            // Fallback to all records if no full fill-ups
-            guard totalGallons > 0 else { return 0 }
-            return totalMiles / totalGallons
-        }
-
-        let fullMiles = fullFillUps.reduce(0) { $0 + milesDriven(for: $1) }
-        let fullGallons = fullFillUps.reduce(0) { $0 + $1.gallons }
-        guard fullGallons > 0 else { return 0 }
-        return fullMiles / fullGallons
-    }
-
-    var averageCostPerMile: Double {
-        guard totalMiles > 0 else { return 0 }
-        return totalSpent / totalMiles
-    }
-
-    var averageFillUpCost: Double {
-        guard !records.isEmpty else { return 0 }
-        return totalSpent / Double(records.count)
-    }
-
-    var lastFillUpDate: Date? {
-        records.first?.date
-    }
-}
 
 // MARK: - Export/Import Views
 
@@ -470,6 +443,9 @@ struct ImportCSVView: View {
                     record.vehicle = vehicle
                     modelContext.insert(record)
                 }
+
+                // Full recalculation after bulk import
+                StatisticsCacheService.recalculateAllStatistics(for: vehicle)
 
                 importedCount = records.count
                 showingSuccess = true

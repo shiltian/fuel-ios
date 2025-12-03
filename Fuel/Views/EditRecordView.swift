@@ -3,6 +3,7 @@ import SwiftData
 
 struct EditRecordView: View {
     @Bindable var record: FuelingRecord
+    let vehicle: Vehicle
 
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
@@ -26,8 +27,9 @@ struct EditRecordView: View {
         case totalCost
     }
 
-    init(record: FuelingRecord) {
+    init(record: FuelingRecord, vehicle: Vehicle) {
         self.record = record
+        self.vehicle = vehicle
         _date = State(initialValue: record.date)
         _currentMilesString = State(initialValue: String(format: "%.0f", record.currentMiles))
         _pricePerGallonString = State(initialValue: String(format: "%.3f", record.pricePerGallon))
@@ -284,6 +286,9 @@ struct EditRecordView: View {
         record.isPartialFillUp = isPartialFillUp
         record.notes = notes.isEmpty ? nil : notes
 
+        // Full recalculation on edit (as agreed - edits are less frequent)
+        StatisticsCacheService.updateForEditedRecord(vehicle: vehicle)
+
         dismiss()
     }
 }
@@ -295,8 +300,9 @@ struct EditRecordView: View {
         gallons: 12.5,
         totalCost: 43.24
     )
+    let vehicle = Vehicle(name: "Test Car")
 
-    return EditRecordView(record: record)
+    return EditRecordView(record: record, vehicle: vehicle)
         .modelContainer(for: [Vehicle.self, FuelingRecord.self], inMemory: true)
 }
 

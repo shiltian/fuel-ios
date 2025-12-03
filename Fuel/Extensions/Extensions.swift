@@ -147,24 +147,14 @@ extension Array where Element == FuelingRecord {
         return records(from: startOfMonth, to: endOfMonth)
     }
 
-    /// Get the previous miles for a given record (from the record before it in date order)
-    func previousMiles(for record: FuelingRecord) -> Double {
-        let sortedByDate = sorted { $0.date < $1.date }
-        guard let index = sortedByDate.firstIndex(where: { $0.id == record.id }),
-              index > 0 else {
-            return 0
-        }
-        return sortedByDate[index - 1].currentMiles
-    }
-
     /// Calculate total cost for records
     var totalCost: Double {
         reduce(0) { $0 + $1.totalCost }
     }
 
-    /// Calculate total miles for records
+    /// Calculate total miles for records (using cached values)
     var totalMiles: Double {
-        reduce(0) { $0 + $1.milesDriven(previousMiles: previousMiles(for: $1)) }
+        reduce(0) { $0 + $1.getMilesDriven() }
     }
 
     /// Calculate total gallons for records

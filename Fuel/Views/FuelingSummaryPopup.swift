@@ -6,6 +6,23 @@ struct FuelingSummaryPopup: View {
 
     @Environment(\.dismiss) private var dismiss
 
+    // Use cached values for performance
+    private var mpgValue: Double {
+        record.getMPG()
+    }
+
+    private var costPerMileValue: Double {
+        record.getCostPerMile()
+    }
+
+    private var milesDrivenValue: Double {
+        record.getMilesDriven()
+    }
+
+    private var hasMPG: Bool {
+        previousMiles > 0 && !record.isPartialFillUp && mpgValue > 0
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             // Header
@@ -40,7 +57,7 @@ struct FuelingSummaryPopup: View {
             // Stats Cards
             VStack(spacing: 16) {
                 // MPG Card - Hero Stat (only show for full fill-ups with valid previous record)
-                if previousMiles > 0 && !record.isPartialFillUp {
+                if hasMPG {
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Gas Mileage")
@@ -48,7 +65,7 @@ struct FuelingSummaryPopup: View {
                                 .foregroundColor(.secondary)
 
                             HStack(alignment: .firstTextBaseline, spacing: 4) {
-                                Text(record.mpg(previousMiles: previousMiles).formatted(.number.precision(.fractionLength(1))))
+                                Text(mpgValue.formatted(.number.precision(.fractionLength(1))))
                                     .font(.custom("Avenir Next", size: 48))
                                     .fontWeight(.bold)
                                     .foregroundColor(.purple)
@@ -86,7 +103,7 @@ struct FuelingSummaryPopup: View {
                                 .foregroundColor(.secondary)
 
                             HStack(alignment: .firstTextBaseline, spacing: 2) {
-                                Text(record.costPerMile(previousMiles: previousMiles).currencyFormatted)
+                                Text(costPerMileValue.currencyFormatted)
                                     .font(.custom("Avenir Next", size: 36))
                                     .fontWeight(.bold)
                                     .foregroundColor(.orange)
@@ -124,7 +141,7 @@ struct FuelingSummaryPopup: View {
                     if previousMiles > 0 {
                         SummaryDetailCard(
                             title: "Miles Driven",
-                            value: "\(record.milesDriven(previousMiles: previousMiles).formatted(.number.precision(.fractionLength(0)))) mi",
+                            value: "\(milesDrivenValue.formatted(.number.precision(.fractionLength(0)))) mi",
                             icon: "road.lanes",
                             color: .blue
                         )

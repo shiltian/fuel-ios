@@ -61,6 +61,11 @@ struct VehicleListView: View {
 struct VehicleRowView: View {
     let vehicle: Vehicle
 
+    // Use cached record count for performance
+    private var recordCount: Int {
+        vehicle.cachedRecordCount ?? vehicle.fuelingRecords?.count ?? 0
+    }
+
     var body: some View {
         HStack(spacing: 16) {
             ZStack {
@@ -97,7 +102,7 @@ struct VehicleRowView: View {
 
             Spacer()
 
-            if let recordCount = vehicle.fuelingRecords?.count, recordCount > 0 {
+            if recordCount > 0 {
                 Text("\(recordCount)")
                     .font(.custom("Avenir Next", size: 14))
                     .fontWeight(.medium)

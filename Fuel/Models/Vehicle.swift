@@ -13,6 +13,22 @@ final class Vehicle {
     @Relationship(deleteRule: .cascade, inverse: \FuelingRecord.vehicle)
     var fuelingRecords: [FuelingRecord]?
 
+    // MARK: - Cached Statistics (for performance)
+    // These are pre-computed and stored to avoid recalculating on every view render
+    var cachedTotalSpent: Double?
+    var cachedTotalMiles: Double?
+    var cachedTotalGallons: Double?
+    var cachedAverageMPG: Double?
+    var cachedAverageCostPerMile: Double?
+    var cachedAverageFillUpCost: Double?
+    var cachedAveragePricePerGallon: Double?
+    var cachedBestMPG: Double?
+    var cachedWorstMPG: Double?
+    var cachedHighestPricePerGallon: Double?
+    var cachedLowestPricePerGallon: Double?
+    var cachedRecordCount: Int?
+    var cacheLastUpdated: Date?
+
     init(
         id: UUID = UUID(),
         name: String,
@@ -45,6 +61,32 @@ final class Vehicle {
 
     var lastRecord: FuelingRecord? {
         sortedRecords.first
+    }
+
+    // MARK: - Cache Status
+
+    /// Check if cache needs to be rebuilt (no cache or records changed)
+    var needsCacheRebuild: Bool {
+        guard cacheLastUpdated != nil else { return true }
+        guard let cachedCount = cachedRecordCount else { return true }
+        return cachedCount != (fuelingRecords?.count ?? 0)
+    }
+
+    /// Invalidate the cache (call before full recalculation)
+    func invalidateCache() {
+        cachedTotalSpent = nil
+        cachedTotalMiles = nil
+        cachedTotalGallons = nil
+        cachedAverageMPG = nil
+        cachedAverageCostPerMile = nil
+        cachedAverageFillUpCost = nil
+        cachedAveragePricePerGallon = nil
+        cachedBestMPG = nil
+        cachedWorstMPG = nil
+        cachedHighestPricePerGallon = nil
+        cachedLowestPricePerGallon = nil
+        cachedRecordCount = nil
+        cacheLastUpdated = nil
     }
 }
 

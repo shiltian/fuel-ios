@@ -371,6 +371,9 @@ struct AddRecordView: View {
         record.vehicle = vehicle
         modelContext.insert(record)
 
+        // Update statistics cache incrementally
+        StatisticsCacheService.updateForNewRecord(record, vehicle: vehicle)
+
         onSave?(record, previousMiles)
         dismiss()
     }

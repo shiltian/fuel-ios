@@ -2,6 +2,7 @@ import Foundation
 import SwiftUI
 
 /// ViewModel for calculating and managing vehicle statistics
+/// Uses cached values from FuelingRecord for optimal performance
 @Observable
 class StatisticsViewModel {
     private var records: [FuelingRecord]
@@ -14,36 +15,14 @@ class StatisticsViewModel {
         self.records = records
     }
 
-    // MARK: - Helper Methods
-
-    /// Get the previous miles for a given record (from the record before it in date order)
-    private func previousMiles(for record: FuelingRecord) -> Double {
-        let sortedByDate = records.sorted { $0.date < $1.date }
-        guard let index = sortedByDate.firstIndex(where: { $0.id == record.id }),
-              index > 0 else {
-            return 0
-        }
-        return sortedByDate[index - 1].currentMiles
-    }
-
-    /// Calculate miles driven for a record
-    private func milesDriven(for record: FuelingRecord) -> Double {
-        record.milesDriven(previousMiles: previousMiles(for: record))
-    }
-
-    /// Calculate MPG for a record
-    private func mpg(for record: FuelingRecord) -> Double {
-        record.mpg(previousMiles: previousMiles(for: record))
-    }
-
-    // MARK: - Basic Statistics
+    // MARK: - Basic Statistics (using cached values)
 
     var totalSpent: Double {
         records.reduce(0) { $0 + $1.totalCost }
     }
 
     var totalMiles: Double {
-        records.reduce(0) { $0 + milesDriven(for: $1) }
+        records.reduce(0) { $0 + $1.getMilesDriven() }
     }
 
     var totalGallons: Double {
@@ -57,13 +36,13 @@ class StatisticsViewModel {
     // MARK: - Averages
 
     var averageMPG: Double {
-        let fullFillUps = records.filter { !$0.isPartialFillUp }
+        let fullFillUps = records.filter { !$0.isPartialFillUp && $0.cachedMPG != nil }
         guard !fullFillUps.isEmpty else {
             guard totalGallons > 0 else { return 0 }
             return totalMiles / totalGallons
         }
 
-        let fullMiles = fullFillUps.reduce(0) { $0 + milesDriven(for: $1) }
+        let fullMiles = fullFillUps.reduce(0) { $0 + $1.getMilesDriven() }
         let fullGallons = fullFillUps.reduce(0) { $0 + $1.gallons }
         guard fullGallons > 0 else { return 0 }
         return fullMiles / fullGallons
@@ -107,25 +86,26 @@ class StatisticsViewModel {
     }
 
     func monthlyMiles(for month: Date) -> Double {
-        records.records(forMonth: month).totalMiles
+        // Use cached miles driven
+        records.records(forMonth: month).reduce(0) { $0 + $1.getMilesDriven() }
     }
 
     func monthlyGallons(for month: Date) -> Double {
         records.records(forMonth: month).totalGallons
     }
 
-    // MARK: - Best/Worst Statistics
+    // MARK: - Best/Worst Statistics (using cached values)
 
     var bestMPG: Double? {
-        let fullFillUps = records.filter { !$0.isPartialFillUp }
-        guard !fullFillUps.isEmpty else { return nil }
-        return fullFillUps.map { mpg(for: $0) }.max()
+        let validRecords = records.filter { $0.cachedMPG != nil && $0.cachedMPG! > 0 }
+        guard !validRecords.isEmpty else { return nil }
+        return validRecords.compactMap { $0.cachedMPG }.max()
     }
 
     var worstMPG: Double? {
-        let fullFillUps = records.filter { !$0.isPartialFillUp }
-        guard !fullFillUps.isEmpty else { return nil }
-        return fullFillUps.map { mpg(for: $0) }.min()
+        let validRecords = records.filter { $0.cachedMPG != nil && $0.cachedMPG! > 0 }
+        guard !validRecords.isEmpty else { return nil }
+        return validRecords.compactMap { $0.cachedMPG }.min()
     }
 
     var highestPricePerGallon: Double? {
@@ -144,14 +124,14 @@ class StatisticsViewModel {
         records.min(by: { $0.totalCost < $1.totalCost })
     }
 
-    // MARK: - Trends
+    // MARK: - Trends (using cached values)
 
     /// Calculate the trend in MPG over the last N records
     func mpgTrend(lastN: Int = 5) -> TrendDirection {
-        let recentRecords = Array(records.filter { !$0.isPartialFillUp }.prefix(lastN))
+        let recentRecords = Array(records.filter { $0.cachedMPG != nil }.prefix(lastN))
         guard recentRecords.count >= 2 else { return .stable }
 
-        let recentAvg = recentRecords.reduce(0) { $0 + mpg(for: $1) } / Double(recentRecords.count)
+        let recentAvg = recentRecords.reduce(0) { $0 + ($1.cachedMPG ?? 0) } / Double(recentRecords.count)
         let overallAvg = averageMPG
 
         let difference = recentAvg - overallAvg
@@ -214,7 +194,7 @@ class StatisticsViewModel {
         }
     }
 
-    // MARK: - Chart Data
+    // MARK: - Chart Data (using cached values)
 
     struct ChartDataPoint: Identifiable {
         let id = UUID()
@@ -224,10 +204,10 @@ class StatisticsViewModel {
     }
 
     func mpgChartData() -> [ChartDataPoint] {
-        records.filter { !$0.isPartialFillUp }
+        records.filter { $0.cachedMPG != nil && $0.cachedMPG! > 0 }
             .sorted { $0.date < $1.date }
             .map { record in
-                let mpgValue = mpg(for: record)
+                let mpgValue = record.cachedMPG ?? 0
                 return ChartDataPoint(date: record.date, value: mpgValue, label: "\(mpgValue.formatted(decimals: 1)) MPG")
             }
     }

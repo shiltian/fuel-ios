@@ -100,6 +100,10 @@ struct ContentView: View {
 
         do {
             try modelContext.save()
+
+            // Full recalculation after bulk import
+            StatisticsCacheService.recalculateAllStatistics(for: targetVehicle)
+
             importedRecordsCount = records.count
             showingImportSuccess = true
         } catch {
